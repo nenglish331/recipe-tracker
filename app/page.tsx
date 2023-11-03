@@ -41,14 +41,21 @@ function RecipeCardArray() {
 }
 
 function TopHeader() {
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/api/cuisines/all')
+      .then(response => response.json())
+      .then(json => {
+        setData(json);
+        console.log(data);
+      })
+  }, []);
   return (
     <div>
       <SimpleGrid columns={2} spacing='40px' margin='40px'>
       <Input placeholder='medium size' size='med' />
       <Select placeholder='Select option'>
-      <option value='option1'>Option 1</option>
-      <option value='option2'>Option 2</option>
-      <option value='option3'>Option 3</option>
+      {data.map(cuisine => <option value= {cuisine.dish_cuisine} >{cuisine.dish_cuisine}</option>)}
       </Select>
       </SimpleGrid>
     </div>
