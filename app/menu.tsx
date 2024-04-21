@@ -9,7 +9,7 @@ import {
   Button,
 } from '@chakra-ui/react'
 
-import { HamburgerIcon } from '@chakra-ui/icons'
+// import { HamburgerIcon } from '@chakra-ui/icons'
 
 import Link from 'next/link'
 
@@ -25,7 +25,7 @@ function MenuItemWithLink(props) {
 export function AppMenu() {
   return (
     <Menu>
-      <MenuButton as={Button} rightIcon={<HamburgerIcon />}>
+      <MenuButton as={Button}>
         Navigate
       </MenuButton>
       <MenuList>
