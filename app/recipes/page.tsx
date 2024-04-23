@@ -28,7 +28,6 @@ function does_dish_match_filters(dish, search_text, cuisine_filter) {
   let upper_search_text = search_text.toUpperCase();
   let search_match = false;
   let cuisine_match = false;
-  console.log(upper_dish_text);
   if (upper_search_text.length == 0 || upper_dish_text.includes(upper_search_text)) {
     search_match = true;
   }
@@ -60,7 +59,6 @@ function RecipeCardArray(props) {
         setData(json);
       })
   }, []);
-  console.log(props.cuisine);
   return (
     <>
     <SimpleGrid columns = {4} spacing='40px' margin='40px' >
@@ -99,11 +97,9 @@ export default function App() {
   const [searchText, setSearchText] = useState("");
   function handleSelectChange(e) {
     setSelectedValue(e.target.value);
-    console.log(e.target.value);
   }
   function handleSearchChange(e) {
     setSearchText(e.target.value);
-    console.log(e.target.value);
   }
   return (
     <>
