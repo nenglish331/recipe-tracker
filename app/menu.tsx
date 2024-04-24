@@ -30,8 +30,9 @@ export function AppMenu() {
       </MenuButton>
       <MenuList>
         <MenuItemWithLink link="/" text="Home Page"></MenuItemWithLink>
-        <MenuItemWithLink link="/recipes" text="Recipes"></MenuItemWithLink>
-        <MenuItemWithLink link="/add_recipe" text="Add a Recipe"></MenuItemWithLink>
+        <MenuItemWithLink link="/dishes" text="Dishes"></MenuItemWithLink>
+        <MenuItemWithLink link="/add_dish" text="Add a Dish"></MenuItemWithLink>
+        <MenuItemWithLink link="/dishes/id" text="View a Dish"></MenuItemWithLink>
       </MenuList>
     </Menu>
   )

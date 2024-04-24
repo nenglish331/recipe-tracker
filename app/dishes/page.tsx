@@ -1,10 +1,11 @@
 // app/providers.tsx
 'use client'
 
-import { Card, CardHeader, CardBody, CardFooter, Button, Heading, Text, SimpleGrid, Input, Select } from '@chakra-ui/react'
+import { Card, CardHeader, CardBody, CardFooter, Button, Heading, Text, SimpleGrid, Input, Select, Link } from '@chakra-ui/react'
 import { useState, useEffect} from 'react'
 import {AppMenu} from '../menu'
 import {Header} from '../header'
+import NextLink from 'next/link'
 
 
 function CardFromJson(props) {
@@ -62,7 +63,7 @@ function RecipeCardArray(props) {
   return (
     <>
     <SimpleGrid columns = {4} spacing='40px' margin='40px' >
-    {filteredData.map(value => <CardFromJson dish_name = {value.dish_name} dish_cuisine = {value.dish_cuisine} dish_id = {value.dish_id} ></CardFromJson>)}
+    {filteredData.map(value => <Link as={NextLink} href={'/dishes/' + value.dish_id}><CardFromJson dish_name = {value.dish_name} dish_cuisine = {value.dish_cuisine} dish_id = {value.dish_id} ></CardFromJson></Link>)}
     </SimpleGrid>
     </>
   )
@@ -103,7 +104,7 @@ export default function App() {
   }
   return (
     <>
-    <Header text="Recipes"></Header>
+    <Header text="Dishes"></Header>
     <TopHeader handleSelectChange={handleSelectChange} handleSearchChange={handleSearchChange}></TopHeader>
     <RecipeCardArray cuisine={selectedValue} search={searchText}></RecipeCardArray>
     </>

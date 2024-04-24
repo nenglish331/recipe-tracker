@@ -96,7 +96,7 @@ function IngredientWrapper(props) {
 export default function AddRecipe() {
   return (
     <div>
-      <Header text="Add A Recipe"></Header>
+      <Header text="Add A Dish"></Header>
       <SimpleGrid columns={2} spacing='40px' margin='40px'>
         <Input placeholder="Recipe Name"></Input>
         <TopHeader></TopHeader>
