@@ -5,35 +5,20 @@ import { Card, CardHeader, CardBody, CardFooter, Button, Heading, Text, SimpleGr
 import { useState, useEffect} from 'react'
 import {Header} from '../../header'
 
-function CardFromJson(props) {
-  return (
-    <Card>
-    <CardHeader>
-      <Heading size='md'>{props.dish_name}</Heading>
-    </CardHeader>
-    <CardBody>
-      <Text>{props.dish_cuisine}</Text>
-    </CardBody>
-    <CardFooter>
-      <Button>{props.dish_id}</Button>
-    </CardFooter>
-  </Card>
-  )
-}
 
 function DishDetailPage(props) {
   const [dish, setDish] = useState([]);
   const [ingredients, setIngredients] = useState([]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/dishes/' + props.id)
+    fetch('http://127.0.0.1:8000/api/dish/' + props.id)
       .then(response => response.json())
       .then(json => {
         setDish(json);
       })
   }, []);
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/dishes/' + props.id + '/ingredients')
+    fetch('http://127.0.0.1:8000/api/dish/' + props.id + '/ingredients')
       .then(response => response.json())
       .then(json => {
         setIngredients(json);

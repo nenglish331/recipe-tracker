@@ -54,7 +54,7 @@ function RecipeCardArray(props) {
   }, [data, props.cuisine, props.search, initial_load]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/recipes/all')
+    fetch('http://127.0.0.1:8000/api/recipe/all')
       .then(response => response.json())
       .then(json => {
         setData(json);
@@ -72,7 +72,7 @@ function RecipeCardArray(props) {
 function TopHeader({handleSelectChange, handleSearchChange}) {
   const [data, setData] = useState([]);
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/cuisines/all')
+    fetch('http://127.0.0.1:8000/api/cuisine/all')
       .then(response => response.json())
       .then(json => {
         setData(json);

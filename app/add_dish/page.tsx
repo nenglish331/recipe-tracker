@@ -20,21 +20,18 @@ import {
 import { useState, useEffect} from 'react'
 import {AppMenu} from '../menu'
 import {Header} from '../header'
+import { fetch_ingredients } from '../api/ingredient/all'
+import { fetch_quantity_type } from '../api/quantity_type/all'
+import { fetch_cuisine } from '../api/cuisine/all'
 
-function TopHeader() {
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/cuisines/all')
-      .then(response => response.json())
-      .then(json => {
-        setData(json);
-      })
-  }, []);
+function CuisineDropinput( {cuisine, handleCuisineChange}) {
   return (
-    <Select placeholder="Cuisine">
-      <option value="All">{"All"}</option>
-      {data.map(cuisine => <option value= {cuisine.dish_cuisine} >{cuisine.dish_cuisine}</option>)}
-    </Select>
+    <>
+    <datalist id='cuisines_all'>
+      {fetch_cuisine().map(cui => <option value={cui.dish_cuisine}>{cui.dish_cuisine}</option>)}
+    </datalist>
+    <Input placeholder="Cuisine" list="cuisines_all" name="Cuisine" value={cuisine} onChange={handleCuisineChange}></Input>
+    </>
   )
 }
 
@@ -47,14 +44,20 @@ function RecipeIngredient(props) {
           <Button onClick={props.remove}>Remove</Button>
         </GridItem>
         <GridItem colStart={2} colEnd={4} h='10'>
-          <Input placeholder="Ingredient Name"></Input>
+          <datalist id='ingredients_all'>
+            {fetch_ingredients().map(ing => <option value={ing.ingredient_name}>{ing.ingredient_name}</option>)}
+          </datalist>
+          <Input placeholder="Ingredient Name" list="ingredients_all" name="Ingredient"></Input>
         </GridItem>
         <GridItem colStart={4} colEnd={7} h='10'>
-          <Input placeholder="Quantity Type"></Input>
+          <datalist id='quantity_type_all'>
+            {fetch_quantity_type().map(qt => <option value={qt.quantity_type_text}>{qt.quantity_type_text}</option>)}
+          </datalist>
+          <Input placeholder="Quantity Type" list="quantity_type_all" name="Quantity Type"></Input>
         </GridItem>
         <GridItem colStart={7} colEnd={10} h='10'>
           <NumberInput margin='0'>
-            <NumberInputField />
+            <NumberInputField placeholder="Quantity" />
             <NumberInputStepper>
               <NumberIncrementStepper />
               <NumberDecrementStepper />
@@ -66,8 +69,8 @@ function RecipeIngredient(props) {
   )
 }
 
-function IngredientWrapper(props) {
-  const [ingredients, setIngredients] = useState<any[]>([]);
+function IngredientWrapper({ingredients, setIngredients}) {
+  
   const [lastId, setId] = useState<number>(0);
 
   const removeIngredient = id => {
@@ -78,7 +81,9 @@ function IngredientWrapper(props) {
     const nextId = lastId + 1;
     setId(nextId);
     const newIngredient = {
-      id: lastId
+      id: lastId,
+      ingredient_name: '',
+      ingredient_quantity: 0
     };
     setIngredients(currentChildren => [...currentChildren, newIngredient]);
   };
@@ -94,14 +99,44 @@ function IngredientWrapper(props) {
 }
 
 export default function AddRecipe() {
+  const [dishName, setDishName] = useState<string>('');
+  const [cuisine, setCuisine] = useState<string>('');
+  const [ingredients, setIngredients] = useState<any[]>([]);
+  const [resp, setResponse] = useState()
+  const handleDishChange = event => {
+    setDishName(event.target.value);
+  }
+  const handleCuisineChange = event => {
+    setCuisine(event.target.value);
+  }
+function send() {
+  if (dishName === "") {
+    console.log("Empty");
+    return
+  }
+      fetch('http://127.0.0.1:8000/api/create/recipe',
+    {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        recipe_name: dishName,
+        recipe_cuisine: cuisine,
+        recipe_ingredients: ingredients
+      }),
+    }
+  )
+  }
   return (
     <div>
       <Header text="Add A Dish"></Header>
       <SimpleGrid columns={2} spacing='40px' margin='40px'>
-        <Input placeholder="Recipe Name"></Input>
-        <TopHeader></TopHeader>
+        <Input placeholder="Dish Name" onChange={handleDishChange} value={dishName}></Input>
+        <CuisineDropinput cuisine={cuisine} handleCuisineChange={handleCuisineChange}></CuisineDropinput>
       </SimpleGrid>
-      <IngredientWrapper></IngredientWrapper>
+      <IngredientWrapper ingredients={ingredients} setIngredients={setIngredients}></IngredientWrapper>
+      <Button onClick={send}></Button>
     </div>
   )
 }
