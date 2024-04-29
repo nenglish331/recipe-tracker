@@ -15,7 +15,14 @@ import {
   Select,
   Button,
   Heading,
-  Center
+  Center,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  useDisclosure,
+  AlertDialogHeader
 } from '@chakra-ui/react'
 import { useState, useEffect} from 'react'
 import {AppMenu} from '../menu'
@@ -47,17 +54,17 @@ function RecipeIngredient(props) {
           <datalist id='ingredients_all'>
             {fetch_ingredients().map(ing => <option value={ing.ingredient_name}>{ing.ingredient_name}</option>)}
           </datalist>
-          <Input placeholder="Ingredient Name" list="ingredients_all" name="Ingredient"></Input>
+          <Input id={"ingredient_" + props.id + "_ingredient_name"} placeholder="Ingredient Name" list="ingredients_all" name="Ingredient"></Input>
         </GridItem>
         <GridItem colStart={4} colEnd={7} h='10'>
           <datalist id='quantity_type_all'>
             {fetch_quantity_type().map(qt => <option value={qt.quantity_type_text}>{qt.quantity_type_text}</option>)}
           </datalist>
-          <Input placeholder="Quantity Type" list="quantity_type_all" name="Quantity Type"></Input>
+          <Input id={"ingredient_" + props.id + "_ingredient_quantity_type"} placeholder="Quantity Type" list="quantity_type_all" name="Quantity Type"></Input>
         </GridItem>
         <GridItem colStart={7} colEnd={10} h='10'>
           <NumberInput margin='0'>
-            <NumberInputField placeholder="Quantity" />
+            <NumberInputField id={"ingredient_" + props.id + "_ingredient_quantity"} placeholder="Quantity" />
             <NumberInputStepper>
               <NumberIncrementStepper />
               <NumberDecrementStepper />
@@ -66,6 +73,32 @@ function RecipeIngredient(props) {
         </GridItem>
       </Grid>
     </Box>
+  )
+}
+
+function Alert(props) {
+  return (
+    <AlertDialog
+        isOpen={props.isOpen}
+        leastDestructiveRef={props.cancelRef}
+        onClose={props.onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+              Error Inserting Dish
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              A dish with this name already exists. Choose a different name.
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button colorScheme='red' onClick={props.onClose} ml={3}>
+                OK
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
   )
 }
 
@@ -103,34 +136,64 @@ export default function AddRecipe() {
   const [cuisine, setCuisine] = useState<string>('');
   const [ingredients, setIngredients] = useState<any[]>([]);
   const [resp, setResponse] = useState()
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const handleDishChange = event => {
     setDishName(event.target.value);
   }
   const handleCuisineChange = event => {
     setCuisine(event.target.value);
   }
-function send() {
-  if (dishName === "") {
-    console.log("Empty");
-    return
-  }
-      fetch('http://127.0.0.1:8000/api/create/recipe',
-    {
-      method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        recipe_name: dishName,
-        recipe_cuisine: cuisine,
-        recipe_ingredients: ingredients
-      }),
+  function send() {
+    if (dishName === "") {
+      console.log("Empty");
+      return
     }
-  )
+    const ings = [];
+    console.log(ingredients);
+    for (let i=0; i<ingredients.length; i++) {
+      let ing_to_append = {
+        "ingredient_name" : '',
+        "quantity_type" : '',
+        "quantity" : 0
+      };
+      let ing = ingredients[i];
+      console.log(ing);
+      ing_to_append.ingredient_name = document.getElementById("ingredient_" + ing.id + "_ingredient_name").value;
+      ing_to_append.quantity_type = document.getElementById("ingredient_" + ing.id + "_ingredient_quantity_type").value;
+      ing_to_append.quantity = document.getElementById("ingredient_" + ing.id + "_ingredient_quantity").value;
+      console.log("ingredient_" + ing.id + "_ingredient_name");
+      ings.push(ing_to_append)
+    }
+        fetch('http://127.0.0.1:8000/api/create/recipe',
+      {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          recipe_name: dishName,
+          recipe_cuisine: cuisine,
+          recipe_ingredients: ings
+        }),
+      }
+    ).then(response => response.json())
+    .then(json => {
+      setResponse(json);
+    })
+    console.log(resp);
   }
+  useEffect(() => {
+    if (resp === undefined) {
+      console.log("Passing");
+    } else if (resp.status_code == 400) {
+      onOpen()
+    }
+    }, [resp]
+  )
   return (
     <div>
       <Header text="Add A Dish"></Header>
+      <Alert isOpen={isOpen} onClose={onClose} onOpen={onOpen}></Alert>
       <SimpleGrid columns={2} spacing='40px' margin='40px'>
         <Input placeholder="Dish Name" onChange={handleDishChange} value={dishName}></Input>
         <CuisineDropinput cuisine={cuisine} handleCuisineChange={handleCuisineChange}></CuisineDropinput>
