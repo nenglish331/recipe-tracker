@@ -199,7 +199,7 @@ export default function AddRecipe() {
         <CuisineDropinput cuisine={cuisine} handleCuisineChange={handleCuisineChange}></CuisineDropinput>
       </SimpleGrid>
       <IngredientWrapper ingredients={ingredients} setIngredients={setIngredients}></IngredientWrapper>
-      <Button onClick={send}></Button>
+      <Button onClick={send}>Create Dish</Button>
     </div>
   )
 }
