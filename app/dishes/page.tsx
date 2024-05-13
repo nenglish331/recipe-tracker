@@ -8,7 +8,6 @@ import {Header} from '../header'
 import NextLink from 'next/link'
 import { fetch_cuisine } from '../api/cuisine/all'
 import { fetch_recipe } from '../api/recipe/all'
-import test from 'node:test'
 
 
 function CardFromJson(props) {
@@ -88,7 +87,6 @@ export default function App() {
     setFilteredRecipes([...filtered_array]);
     console.log('In filtering effect');
   }, [recipes, searchRecipe, selectedCuisine]);
-  // Generate shopping list
   // Click Handlers
   function toggleSelectOnClick(dish_id) {
     let copied_array = selectedDishes.splice(0)
@@ -111,8 +109,7 @@ export default function App() {
     <Header text="Dishes"></Header>
     <TopHeader handleCuisineChange={handleCuisineChange} handleRecipeSearchChange={handleRecipeSearchChange}></TopHeader>
     <RecipeCardArray cuisine={selectedCuisine} search={searchRecipe} filteredRecipes={filteredRecipes} clickHandler={toggleSelectOnClick} selectedDishes={selectedDishes}></RecipeCardArray>
-    <Text>{new URLSearchParams({param1:selectedDishes}).toString()}</Text>
-    <Link as={NextLink} href={'/shopping_list/' + new URLSearchParams({param1:selectedDishes}).toString()}><Button>Generate Shopping List</Button></Link>
+    <Link as={NextLink} href={'/shopping_list/' + selectedDishes.join(',')}><Button>Generate Shopping List</Button></Link>
     </>
   )
 }

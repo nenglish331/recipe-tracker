@@ -181,6 +181,7 @@ export default function AddRecipe() {
       setResponse(json);
     })
     console.log(resp);
+    // TODO - Display to user that the recipe has been created
   }
   useEffect(() => {
     if (resp === undefined) {
